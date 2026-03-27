@@ -30,6 +30,6 @@ public class TrustedContact {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "responded_ad")
+    @Column(name = "responded_at")
     private LocalDateTime respondedAt;
 }

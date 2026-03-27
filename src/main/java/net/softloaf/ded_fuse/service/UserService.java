@@ -20,21 +20,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+    private final AuthService authService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    public long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return 0;
-        }
-        try {
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            return userDetails.getUser().getId();
-        } catch (Exception e) {
-            return 0;
-        }
-    }
 
     @Transactional
     public void saveNewUser(NewUserDto newUserDto) {
@@ -74,7 +62,7 @@ public class UserService {
 
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Неверный ID");
-        } else if (user.getId() != getCurrentUserId()) {
+        } else if (user.getId() != authService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав на удаление");
         }
 
