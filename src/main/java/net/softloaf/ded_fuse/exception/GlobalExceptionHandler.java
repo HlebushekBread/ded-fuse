@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(500, "Внутренняя ошибка сервера");
+        ErrorResponse error = new ErrorResponse(500, ex.getMessage());
         return ResponseEntity.internalServerError().body(error);
     }
 }

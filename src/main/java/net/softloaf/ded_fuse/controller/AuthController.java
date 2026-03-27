@@ -1,5 +1,7 @@
 package net.softloaf.ded_fuse.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.dto.JwtRequest;
 import net.softloaf.ded_fuse.dto.JwtResponse;
@@ -10,49 +12,34 @@ import net.softloaf.ded_fuse.security.UserDetailsServiceImpl;
 import net.softloaf.ded_fuse.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.ott.GenerateOneTimeTokenRequest;
+import org.springframework.security.authentication.ott.OneTimeToken;
+import org.springframework.security.authentication.ott.OneTimeTokenService;
+import org.springframework.security.web.authentication.ott.OneTimeTokenGenerationSuccessHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final UserService userService;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final JwtUtils jwtUtils;
-    private final AuthenticationManager authenticationManager;
-
-    @PostMapping("/login")
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest) {
-        UserDetailsImpl userDetails;
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-            userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Incorrect credentials", HttpStatus.UNAUTHORIZED);
-        }
-        String token = jwtUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
-    }
+    private final OneTimeTokenService oneTimeTokenService;
+    private final OneTimeTokenGenerationSuccessHandler oneTimeTokenGenerationSuccessHandler;
 
     @PostMapping("/register")
-    public ResponseEntity<?> saveNewUser(@RequestBody NewUserDto newUserDto) {
-        userService.saveNewUser(newUserDto);
-
-        UserDetailsImpl userDetails;
+    public ResponseEntity<?> registerUser(@RequestBody NewUserDto userDto, HttpServletRequest request, HttpServletResponse response) {
+        userService.saveNewUser(userDto);
+        GenerateOneTimeTokenRequest ottRequest = new GenerateOneTimeTokenRequest(userDto.getUsername());
+        OneTimeToken ott = oneTimeTokenService.generate(ottRequest);
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(newUserDto.getUsername(), newUserDto.getPassword()));
-            userDetails = userDetailsService.loadUserByUsername(newUserDto.getUsername());
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Incorrect credentials", HttpStatus.UNAUTHORIZED);
+            oneTimeTokenGenerationSuccessHandler.handle(request, response, ott);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка отправки кода");
         }
-        String token = jwtUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.noContent().build();
     }
 }

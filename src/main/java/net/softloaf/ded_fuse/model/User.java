@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -16,13 +18,31 @@ public class User {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "username")
+    @Column(name = "phone_number")
     private String username;
-
-    @Column(name = "password")
-    private String password;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Column(name = "last_known_lat")
+    private Double lastKnownLat;
+
+    @Column(name = "last_known_lon")
+    private Double lastKnownLon;
+
+    @Column(name = "last_known_at")
+    private LocalDateTime lastKnownAt;
+
+    @Column(name = "last_heartbeat_at")
+    private LocalDateTime lastHeartbeatAt;
+
+    @Column(name = "reminder_sent_at")
+    private LocalDateTime reminderSentAt;
+
+    @Column(name = "last_active_at")
+    private LocalDateTime lastActiveAt;
+
+    @Column(name = "registered_at")
+    private LocalDateTime registeredAt;
 }

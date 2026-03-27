@@ -29,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return user.getPassword();
+        return null;
     }
 
     @Override

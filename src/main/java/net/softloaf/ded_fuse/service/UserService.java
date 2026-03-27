@@ -6,14 +6,15 @@ import net.softloaf.ded_fuse.model.Role;
 import net.softloaf.ded_fuse.model.User;
 import net.softloaf.ded_fuse.repository.RoleRepository;
 import net.softloaf.ded_fuse.repository.UserRepository;
+import net.softloaf.ded_fuse.security.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -21,7 +22,6 @@ import java.util.Map;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -29,8 +29,8 @@ public class UserService {
             return 0;
         }
         try {
-            Map<String, String> principal = (Map<String, String>) authentication.getPrincipal();
-            return Long.parseLong(principal.get("id"));
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            return userDetails.getUser().getId();
         } catch (Exception e) {
             return 0;
         }
@@ -46,13 +46,24 @@ public class UserService {
         }
 
         user.setUsername(newUserDto.getUsername());
-        user.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
 
         Role role = roleRepository.findByName(newUserDto.getRole()).orElse(null);
         if(role == null) {
             new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нет такой роли");
         }
         user.setRole(role);
+
+        user.setLastKnownLat(0.0);
+        user.setLastKnownLon(0.0);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        user.setLastKnownAt(now);
+        user.setLastHeartbeatAt(now);
+        user.setReminderSentAt(now);
+        user.setLastActiveAt(now);
+
+        user.setRegisteredAt(now);
 
         userRepository.save(user);
     }
