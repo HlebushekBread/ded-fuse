@@ -22,7 +22,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 }

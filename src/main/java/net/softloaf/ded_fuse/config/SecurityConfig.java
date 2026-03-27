@@ -35,9 +35,9 @@ public class SecurityConfig {
     public SecurityFilterChain getSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/test").authenticated()
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/register").permitAll()
+                        .requestMatchers("/api/v1/test").authenticated()
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(getDaoAuthenticationProvider())

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api/v1/test")
 public class TestController {
     @GetMapping
     public ResponseEntity<?> getResponse() {

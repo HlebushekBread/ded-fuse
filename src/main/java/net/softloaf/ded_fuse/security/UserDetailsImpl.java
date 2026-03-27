@@ -2,7 +2,9 @@ package net.softloaf.ded_fuse.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.model.User;
+import net.softloaf.ded_fuse.repository.RoleRepository;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -21,7 +23,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().toString()));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
         return grantedAuthorities;
     }
 

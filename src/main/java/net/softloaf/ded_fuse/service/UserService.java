@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.dto.NewUserDto;
 import net.softloaf.ded_fuse.model.Role;
 import net.softloaf.ded_fuse.model.User;
+import net.softloaf.ded_fuse.repository.RoleRepository;
 import net.softloaf.ded_fuse.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public long getCurrentUserId() {
@@ -45,7 +47,12 @@ public class UserService {
 
         user.setUsername(newUserDto.getUsername());
         user.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
-        user.setRole(Role.USER);
+
+        Role role = roleRepository.findByName(newUserDto.getRole()).orElse(null);
+        if(role == null) {
+            new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нет такой роли");
+        }
+        user.setRole(role);
 
         userRepository.save(user);
     }
