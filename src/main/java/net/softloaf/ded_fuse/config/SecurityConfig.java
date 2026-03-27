@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.ott.OneTimeTokenAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,11 +21,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.ott.OneTimeTokenAuthenticationConverter;
 import org.springframework.security.web.authentication.ott.OneTimeTokenGenerationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +57,15 @@ public class SecurityConfig {
                         .tokenGeneratingUrl("/api/v1/auth/generate")
                         .tokenGenerationSuccessHandler(getOneTimeTokenGenerationSuccessHandler())
                         .loginProcessingUrl("/api/v1/auth/login")
+                        .authenticationConverter(request -> {
+                            try {
+                                Map<String, String> body = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+                                String token = body.get("token");
+                                return new OneTimeTokenAuthenticationToken(token);
+                            } catch (IOException e) {
+                                return null;
+                            }
+                        })
                         .authenticationSuccessHandler(getAuthenticationSuccessHandler())
                 )
                 .cors(customizer -> customizer.configurationSource(getCorsConfigurationSource()))

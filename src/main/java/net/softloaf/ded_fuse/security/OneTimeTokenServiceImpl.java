@@ -1,8 +1,6 @@
-package net.softloaf.ded_fuse.service;
+package net.softloaf.ded_fuse.security;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.model.User;
 import net.softloaf.ded_fuse.repository.UserRepository;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
