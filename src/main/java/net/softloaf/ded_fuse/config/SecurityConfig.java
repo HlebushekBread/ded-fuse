@@ -44,13 +44,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/users/delete/{id}").authenticated()
                         .requestMatchers("/api/v1/test").authenticated()
-                        .requestMatchers("/api/v1/ott/generate").permitAll()
+                        .requestMatchers("/api/v1/auth/generate").permitAll()
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/auth/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oneTimeTokenLogin(configurer -> configurer
-                        .tokenGeneratingUrl("/api/v1/ott/generate")
+                        .tokenGeneratingUrl("/api/v1/auth/generate")
                         .tokenGenerationSuccessHandler(getOneTimeTokenGenerationSuccessHandler())
                         .loginProcessingUrl("/api/v1/auth/login")
                         .authenticationSuccessHandler(getAuthenticationSuccessHandler())

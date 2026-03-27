@@ -8,8 +8,18 @@ spring:
   datasource:
     driver: org.postgresql.Driver
     url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  spring:
+    data:
+      redis:
+        host: ${REDIS_HOST:localhost}
+        port: ${REDIS_PORT:6379}
+        password: ${REDIS_PASSWORD:}
+        connect-timeout: ${REDIS_TIMEOUT:2000ms}
+        lettuce:
+          pool:
+            max-active: ${REDIS_MAX_ACTIVE:8}
   jpa:
     hibernate:
       ddl-auto: none

@@ -10,18 +10,18 @@ import org.springframework.web.server.ResponseStatusException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException e) {
         ErrorResponse error = new ErrorResponse(
-                ex.getStatusCode().value(),
-                ex.getReason()
+                e.getStatusCode().value(),
+                e.getReason()
         );
 
-        return new ResponseEntity<>(error, ex.getStatusCode());
+        return new ResponseEntity<>(error, e.getStatusCode());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(500, ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception e) {
+        ErrorResponse error = new ErrorResponse(500, e.getMessage());
         return ResponseEntity.internalServerError().body(error);
     }
 }
