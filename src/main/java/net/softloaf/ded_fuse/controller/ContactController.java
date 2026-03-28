@@ -2,6 +2,7 @@ package net.softloaf.ded_fuse.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.dto.NewTrustedContactDto;
+import net.softloaf.ded_fuse.dto.TrustedContactDto;
 import net.softloaf.ded_fuse.model.TrustedContact;
 import net.softloaf.ded_fuse.service.TrustedContactService;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class ContactController {
     private final TrustedContactService trustedContactService;
 
     @GetMapping("")
-    public List<TrustedContact> getTrustedContacts() {
+    public List<TrustedContactDto> getTrustedContacts() {
         return trustedContactService.getUserTrustedContacts();
     }
 

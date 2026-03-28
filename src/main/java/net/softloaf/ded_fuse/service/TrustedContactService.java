@@ -2,6 +2,7 @@ package net.softloaf.ded_fuse.service;
 
 import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.dto.NewTrustedContactDto;
+import net.softloaf.ded_fuse.dto.TrustedContactDto;
 import net.softloaf.ded_fuse.model.TrustedContact;
 import net.softloaf.ded_fuse.repository.TrustedContactRepository;
 import net.softloaf.ded_fuse.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,8 +22,13 @@ public class TrustedContactService {
     private final UserRepository userRepository;
     private final TrustedContactRepository trustedContactRepository;
 
-    public List<TrustedContact> getUserTrustedContacts() {
-        return trustedContactRepository.findAllByOwnerId(authService.getCurrentUserId());
+    public List<TrustedContactDto> getUserTrustedContacts() {
+        List<TrustedContact> trustedContacts = trustedContactRepository.findAllByOwnerId(authService.getCurrentUserId());
+        List<TrustedContactDto> trustedContactDtos = new ArrayList<>();
+        for(TrustedContact trustedContact : trustedContacts) {
+            trustedContactDtos.add(new TrustedContactDto(trustedContact));
+        }
+        return trustedContactDtos;
     }
 
     public void addTrustedContact(NewTrustedContactDto trustedContactDto) {
@@ -38,8 +45,8 @@ public class TrustedContactService {
     public void acceptTrustedContact(long id) {
         TrustedContact trustedContact = trustedContactRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Неверный ID"));
 
-        if(trustedContact.getOwner().getId() != authService.getCurrentUserId()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав на редактирование");
+        if(trustedContact.getContact().getId() != authService.getCurrentUserId()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав принятие");
         }
 
         trustedContact.setStatus(1);
@@ -50,6 +57,11 @@ public class TrustedContactService {
 
     public void deleteTrustedContact(long id) {
         TrustedContact trustedContact = trustedContactRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Неверный ID"));
+
+        if (trustedContact.getOwner().getId() != authService.getCurrentUserId() && trustedContact.getContact().getId() != authService.getCurrentUserId()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав удаление");
+        }
+
         trustedContactRepository.deleteById(id);
     }
 }
