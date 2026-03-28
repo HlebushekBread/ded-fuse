@@ -22,8 +22,8 @@ public class OneTimeTokenServiceImpl implements OneTimeTokenService {
 
     @Override
     public OneTimeToken generate(GenerateOneTimeTokenRequest request) {
-        String token = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
-        Instant expiresAt = Instant.now().plusSeconds(300);
+        String token = String.format("%04d", ThreadLocalRandom.current().nextInt(10000));
+        int ttl = 300;
 
         String username = request.getUsername();
         if(!userRepository.existsByUsername(username)) {
@@ -33,10 +33,10 @@ public class OneTimeTokenServiceImpl implements OneTimeTokenService {
         redisTemplate.opsForValue().set(
                 PREFIX + token,
                 username,
-                Duration.ofSeconds(300)
+                Duration.ofSeconds(ttl)
         );
 
-        return new DefaultOneTimeToken(token, request.getUsername(), expiresAt);
+        return new DefaultOneTimeToken(token, request.getUsername(), Instant.now().plusSeconds(ttl));
     }
 
     @Override
