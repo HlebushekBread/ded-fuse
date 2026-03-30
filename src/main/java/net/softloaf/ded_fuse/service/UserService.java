@@ -26,19 +26,21 @@ public class UserService {
 
     @Transactional
     public void saveNewUser(NewUserDto newUserDto) {
+        if (newUserDto.getUsername() == null) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Username не может быть пустым");
+        }
+        if (!roleRepository.existsByName(newUserDto.getRole())) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Несуществующая кодировка роли");
+        }
+        if (userRepository.existsByUsername(newUserDto.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь уже существует");
+        }
 
         User user = new User();
-
-        if (userRepository.existsByUsername(newUserDto.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь уже существует");
-        }
 
         user.setUsername(newUserDto.getUsername());
 
         Role role = roleRepository.findByName(newUserDto.getRole()).orElse(null);
-        if(role == null) {
-            new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нет такой роли");
-        }
         user.setRole(role);
 
         user.setLastKnownLat(0.0);
@@ -58,11 +60,9 @@ public class UserService {
 
     @Transactional
     public void deleteUser(long id) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Неверный ID"));
 
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Неверный ID");
-        } else if (user.getId() != authService.getCurrentUserId()) {
+        if (user.getId() != authService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав на удаление");
         }
 

@@ -102,8 +102,7 @@ public class SecurityConfig {
 
             System.out.println("ОТПРАВКА КОДА: " + tokenValue + " для пользователя " + username);
 
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"message\": \"Код отправлен\"}");
+            response.setStatus(204);
         };
     }
 
