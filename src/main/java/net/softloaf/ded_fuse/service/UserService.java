@@ -27,7 +27,10 @@ public class UserService {
     @Transactional
     public void saveNewUser(NewUserDto newUserDto) {
         if (newUserDto.getUsername() == null) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Username не может быть пустым");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Username не может быть null");
+        }
+        if (newUserDto.getUsername().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username не может быть пустым");
         }
         if (!roleRepository.existsByName(newUserDto.getRole())) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Несуществующая кодировка роли");
