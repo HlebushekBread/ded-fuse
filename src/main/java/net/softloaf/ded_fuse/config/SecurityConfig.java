@@ -60,8 +60,12 @@ public class SecurityConfig {
                         .authenticationConverter(request -> {
                             try {
                                 Map<String, String> body = new ObjectMapper().readValue(request.getInputStream(), Map.class);
-                                String token = body.get("token");
-                                return new OneTimeTokenAuthenticationToken(token);
+                                String username = body.get("username");
+                                String code = body.get("code");
+                                if(username == null || username.contains(":") || code == null || code.contains(":")) {
+                                    throw new IOException();
+                                }
+                                return new OneTimeTokenAuthenticationToken(username + ":" + code);
                             } catch (IOException e) {
                                 return null;
                             }

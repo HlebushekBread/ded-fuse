@@ -41,11 +41,21 @@ public class OneTimeTokenServiceImpl implements OneTimeTokenService {
 
     @Override
     public OneTimeToken consume(OneTimeTokenAuthenticationToken request) {
-        String key = PREFIX + request.getTokenValue();
+        String[] requestParts = new String[2];
 
         if(request.getTokenValue() == null) {
             return null;
         }
+
+        try {
+            requestParts = request.getTokenValue().split(":");
+        } catch (Exception e) {
+            return null;
+        }
+
+        String requestUsername = requestParts[0];
+        String requestCode = requestParts[1];
+        String key = PREFIX + requestCode;
 
         Long remainingTtl = redisTemplate.getExpire(key, TimeUnit.SECONDS);
 
@@ -53,11 +63,13 @@ public class OneTimeTokenServiceImpl implements OneTimeTokenService {
             return null;
         }
 
-        String username = redisTemplate.opsForValue().getAndDelete(key);
+        String username = redisTemplate.opsForValue().get(key);
 
-        if (username == null) {
+        if (username == null || !username.equals(requestUsername)) {
             return null;
         }
+
+        redisTemplate.opsForValue().getAndDelete(key);
 
         Instant expiresAt = Instant.now().plusSeconds(remainingTtl);
 
