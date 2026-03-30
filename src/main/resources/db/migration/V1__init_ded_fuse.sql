@@ -53,10 +53,10 @@ ALTER TABLE public.heartbeat_log ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTIT
 
 --
 -- TOC entry 224 (class 1259 OID 25421)
--- Name: push_tokens; Type: TABLE; Schema: public; Owner: -
+-- Name: push_token; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.push_tokens (
+CREATE TABLE public.push_token (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     token character varying NOT NULL,
@@ -67,11 +67,11 @@ CREATE TABLE public.push_tokens (
 
 --
 -- TOC entry 223 (class 1259 OID 25420)
--- Name: push_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: push_token_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-ALTER TABLE public.push_tokens ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.push_tokens_id_seq
+ALTER TABLE public.push_token ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.push_token_id_seq
     START WITH 1
     INCREMENT BY 1
     MINVALUE 0
@@ -168,10 +168,10 @@ COPY public.heartbeat_log (id, user_id, tapped_at, lat, lon) FROM stdin;
 --
 -- TOC entry 5043 (class 0 OID 25421)
 -- Dependencies: 224
--- Data for Name: push_tokens; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: push_token; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.push_tokens (id, user_id, token, platform, updated_at) FROM stdin;
+COPY public.push_token (id, user_id, token, platform, updated_at) FROM stdin;
 \.
 
 
@@ -219,10 +219,10 @@ SELECT pg_catalog.setval('public.heartbeat_logs_id_seq', 1, false);
 --
 -- TOC entry 5054 (class 0 OID 0)
 -- Dependencies: 223
--- Name: push_tokens_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: push_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.push_tokens_id_seq', 1, false);
+SELECT pg_catalog.setval('public.push_token_id_seq', 1, false);
 
 
 --
@@ -254,11 +254,11 @@ ALTER TABLE ONLY public.heartbeat_log
 
 --
 -- TOC entry 4888 (class 2606 OID 25432)
--- Name: push_tokens push_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: push_token push_token_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.push_tokens
-    ADD CONSTRAINT push_tokens_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.push_token
+    ADD CONSTRAINT push_token_pkey PRIMARY KEY (id);
 
 
 --
