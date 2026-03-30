@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username не может быть пустым");
         }
         if (!roleRepository.existsByName(newUserDto.getRole())) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Несуществующая кодировка роли");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующая кодировка роли");
         }
         if (userRepository.existsByUsername(newUserDto.getUsername())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь уже существует");
@@ -59,6 +61,16 @@ public class UserService {
         user.setRegisteredAt(now);
 
         userRepository.save(user);
+    }
+
+    public List<String> findAllUsernamesByRoleName(String name) {
+        Role role = roleRepository.findByName(name).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующая кодировка роли"));
+
+        List<String> usernames = new ArrayList<>();
+        for (User user : userRepository.findAllByRoleId(role.getId())) {
+            usernames.add(user.getUsername());
+        }
+        return usernames;
     }
 
     @Transactional
