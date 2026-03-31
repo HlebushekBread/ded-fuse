@@ -1,9 +1,8 @@
 package net.softloaf.ded_fuse.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.NewTrustedContactDto;
-import net.softloaf.ded_fuse.dto.TrustedContactDto;
-import net.softloaf.ded_fuse.model.TrustedContact;
+import net.softloaf.ded_fuse.dto.NewTrustedContactRequest;
+import net.softloaf.ded_fuse.dto.TrustedContactResponse;
 import net.softloaf.ded_fuse.service.TrustedContactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,25 +15,25 @@ import java.util.List;
 public class ContactController {
     private final TrustedContactService trustedContactService;
 
-    @GetMapping("")
-    public List<TrustedContactDto> getTrustedContacts() {
+    @GetMapping("/get")
+    public List<TrustedContactResponse> getTrustedContacts() {
         return trustedContactService.getUserTrustedContacts();
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> addTrustedContact(@RequestBody NewTrustedContactDto trustedContactDto) {
+    @PostMapping("/add")
+    public ResponseEntity<?> addTrustedContact(@RequestBody NewTrustedContactRequest trustedContactDto) {
         trustedContactService.addTrustedContact(trustedContactDto);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/respond")
-    public ResponseEntity<?> acceptTrustedContact(@PathVariable long id) {
+    public ResponseEntity<?> acceptTrustedContact(@PathVariable(name = "id") long id) {
         trustedContactService.acceptTrustedContact(id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteTrustedContact(@PathVariable long id) {
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<?> deleteTrustedContact(@PathVariable(name = "id") long id) {
         trustedContactService.deleteTrustedContact(id);
         return ResponseEntity.noContent().build();
     }

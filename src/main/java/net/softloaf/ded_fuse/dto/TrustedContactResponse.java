@@ -8,18 +8,18 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class TrustedContactDto {
+public class TrustedContactResponse {
     private long id;
-    private String ownerUsername;
-    private String contactUsername;
+    private UserBasicResponse owner;
+    private UserBasicResponse contact;
     private int status;
     private LocalDateTime createdAt;
     private LocalDateTime respondedAt;
 
-    public TrustedContactDto(TrustedContact trustedContact) {
+    public TrustedContactResponse(TrustedContact trustedContact) {
         this.id = trustedContact.getId();
-        this.ownerUsername = trustedContact.getOwner().getUsername();
-        this.contactUsername = trustedContact.getOwner().getUsername();
+        this.owner = new UserBasicResponse(trustedContact.getOwner());
+        this.contact = new UserBasicResponse(trustedContact.getContact());
         this.status = trustedContact.getStatus();
         this.createdAt = trustedContact.getCreatedAt();
         this.respondedAt = trustedContact.getRespondedAt();

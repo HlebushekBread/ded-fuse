@@ -3,7 +3,7 @@ package net.softloaf.ded_fuse.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.NewUserDto;
+import net.softloaf.ded_fuse.dto.NewUserRequest;
 import net.softloaf.ded_fuse.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +26,9 @@ public class AuthController {
     private final OneTimeTokenGenerationSuccessHandler oneTimeTokenGenerationSuccessHandler;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody NewUserDto newUserDto, HttpServletRequest request, HttpServletResponse response) {
-        userService.saveNewUser(newUserDto);
-        GenerateOneTimeTokenRequest ottRequest = new GenerateOneTimeTokenRequest(newUserDto.getUsername());
+    public ResponseEntity<?> registerUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request, HttpServletResponse response) {
+        userService.saveNewUser(newUserRequest);
+        GenerateOneTimeTokenRequest ottRequest = new GenerateOneTimeTokenRequest(newUserRequest.getUsername());
         OneTimeToken ott = oneTimeTokenService.generate(ottRequest);
         try {
             oneTimeTokenGenerationSuccessHandler.handle(request, response, ott);

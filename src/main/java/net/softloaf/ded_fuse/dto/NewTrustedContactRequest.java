@@ -3,6 +3,6 @@ package net.softloaf.ded_fuse.dto;
 import lombok.Data;
 
 @Data
-public class NewTrustedContactDto {
+public class NewTrustedContactRequest {
     private String contactUsername;
 }

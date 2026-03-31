@@ -1,6 +1,8 @@
 package net.softloaf.ded_fuse.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.softloaf.ded_fuse.dto.UserBasicResponse;
+import net.softloaf.ded_fuse.dto.UserDetailedResponse;
 import net.softloaf.ded_fuse.model.User;
 import net.softloaf.ded_fuse.service.AuthService;
 import net.softloaf.ded_fuse.service.UserService;
@@ -16,9 +18,14 @@ public class UserController {
     private final UserService userService;
     private final AuthService authService;
 
+    @GetMapping("/{id}")
+    public UserDetailedResponse getUser(@PathVariable(name = "id") long id) {
+        return userService.findById(id);
+    }
+
     @GetMapping("/member")
-    public List<String> getMembers() {
-        return userService.findAllUsernamesByRoleName("MEMBER");
+    public List<UserBasicResponse> getMembers() {
+        return userService.findAllByRoleName("MEMBER");
     }
 
     @DeleteMapping("/delete")

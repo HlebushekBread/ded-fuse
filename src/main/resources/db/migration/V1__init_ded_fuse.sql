@@ -30,7 +30,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.heartbeat_log (
     id bigint CONSTRAINT heartbeat_logs_id_not_null NOT NULL,
     user_id bigint CONSTRAINT heartbeat_logs_user_id_not_null NOT NULL,
-    tapped_at timestamp without time zone CONSTRAINT heartbeat_logs_tapped_at_not_null NOT NULL,
+    tapped_at timestamp without time zone NOT NULL,
     lat double precision,
     lon double precision
 );
@@ -130,8 +130,8 @@ CREATE TABLE public."user" (
     id bigint NOT NULL,
     phone_number character varying CONSTRAINT user_username_not_null NOT NULL,
     role_id bigint NOT NULL,
-    last_known_lat double precision NOT NULL,
-    last_known_lon double precision NOT NULL,
+    last_known_lat double precision,
+    last_known_lon double precision,
     last_known_at timestamp without time zone NOT NULL,
     last_heartbeat_at timestamp without time zone NOT NULL,
     reminder_sent_at timestamp without time zone NOT NULL,
@@ -240,7 +240,7 @@ SELECT pg_catalog.setval('public.trusted_contact_id_seq', 1, false);
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 14, true);
+SELECT pg_catalog.setval('public.user_id_seq', 1, false);
 
 
 --

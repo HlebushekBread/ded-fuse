@@ -46,6 +46,10 @@ public class SecurityConfig {
         httpSecurity
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/v1/heartbeats/tap").hasRole("MEMBER")
+                        .requestMatchers("/api/v1/heartbeats/{id}").authenticated()
+                        .requestMatchers("/api/v1/contacts/add").hasRole("KEEPER")
+                        .requestMatchers("/api/v1/contacts/{id}/respond").hasRole("MEMBER")
                         .requestMatchers("/api/v1/contacts/**").authenticated()
                         .requestMatchers("/api/v1/users/**").authenticated()
                         .requestMatchers("/api/v1/auth/generate").permitAll()

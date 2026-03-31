@@ -24,8 +24,8 @@ public class HeartbeatLog {
     private LocalDateTime tappedAt;
 
     @Column(name = "lat")
-    private double lat;
+    private Double lat;
 
     @Column(name = "lon")
-    private double lon;
+    private Double lon;
 }

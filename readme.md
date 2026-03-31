@@ -53,10 +53,26 @@ Authorization: Bearer {token}...
 409, если юзернейм занят <br>
 422, если введены неверные данные <br>
 ### Пользователь:
+#### GET /api/v1/users/{id}
+Для получения детальной информации по пользователю по id <br>
+Отвечает: <br>
+200 с телом вида <br>
+{ <br>
+id: long, <br>
+username: string <br>
+roleName: string <br>
+lastKnownLat: double;
+lastKnownLon: double;
+lastKnownAt: date (ISO 8601)
+lastHeartbeatAt: date (ISO 8601)
+reminderSentAt: date (ISO 8601)
+lastActiveAt: date (ISO 8601)
+registeredAt: date (ISO 8601)
+} <br>
 #### GET /api/v1/users/member
 Для получения списка всех MEMBER юзеров (пожилых) <br>
 Отвечает: <br>
-200 с телом в виде списка (может пустого) строк с юзернеймами всех пожилых <br>
+200 с телом в виде списка (может пустого) объектов вида {id: long, username: string, roleName: string} <br>
 401, если JWT невалидный <br>
 404, если каким-то образом в базе нет роли MEMBER (репортите)
 #### DELETE /api/v1/users/delete
@@ -72,36 +88,62 @@ Authorization: Bearer {token}...
 403, если запрос отправлен не удаляемым пользователем <br>
 404, если удаляемого пользователя не существует <br>
 ### Контакты:
-#### GET /api/v1/contacts
+#### GET /api/v1/contacts/get
 Для получения списка контактов юзера <br>
 Отвечает: <br>
 200 с телом в виде списка (может пустого) объектов вида <br>
 { <br>
 id: long, <br>
-ownerUsername: string, <br>
-contactUsername: string, <br>
+owner: {id: long, username: string, roleName: string}, <br>
+contact: {id: long, username: string, roleName: string}, <br>
 status: int <br>
 createdAt": date (ISO 8601), <br>
 respondedAt: date (ISO 8601), <br>
 } <br>
 401, если JWT невалидный <br>
-#### POST /api/v1/contacts с телом {contactUsername: string}
+#### POST /api/v1/contacts/add с телом {contactUsername: string}
+Доступно только для KEEPER <br>
 Для создания контакта между текущим пользователем и contactUsername <br>
 Отвечает: <br>
 204, если контакт успешно добавлен <br>
+400, если роль контакта не MEMBER <br>
 401, если JWT невалидный <br>
 404, если contactUsername не существует <br>
-#### POST /api/v1/contacts/{id}/respond
+#### PATCH /api/v1/contacts/{id}/respond 
+Доступно только для MEMBER <br>
 Для принятия контакта со стороны того, кому его предложили <br>
 Отвечает: <br>
 204, если контакт успешно принят <br>
 401, если JWT невалидный <br>
 403, если запрос отправлен не добавленным в контакт пользователем <br>
 404, если такого контакта не существует <br>
-#### DELETE /api/v1/contacts/{id}
+#### DELETE /api/v1/contacts/{id}/delete
 Для удаления контакта
 Отвечает: <br>
 204, если удаление успешно <br>
 401, если JWT невалидный <br>
 403, если запрос отправлен не владельцем или добавленным в контакт пользователем <br>
 404, если такого контакта не существует <br>
+### Логи "пульса":
+#### GET /api/v1/heartbeat/{id}
+Для получения лога по id юзера <br>
+Если лога для юзера нет, создает его с дефолтными значениями <br>
+Отвечает: <br>
+200 с телом вида <br>
+{ <br>
+id: long, <br>
+userId: long <br>
+tappedAt: date (ISO 8601), <br>
+lat: double, <br>
+lon: double, <br>
+} <br>
+401, если JWT невалидный <br>
+404, если такого юзера не существует
+#### PUT /api/v1/heartbeat/tap  с телом {lat: double, lon: double}
+Доступно только для MEMBER <br>
+Для клика по кнопке пульса. Обновляет время последнего клика <br>
+и (если lat и lon не null) обновляет последнюю локацию юзера. (Пока что это всё только для лога) <br>
+Если лога для юзера нет, создает его с дефолтными значениями <br>
+Отвечает: <br>
+204, если обновление успешно <br>
+401, если JWT невалидный <br>
