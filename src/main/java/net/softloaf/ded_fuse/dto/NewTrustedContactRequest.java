@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class NewTrustedContactRequest {
-    private String contactUsername;
+    private String memberUsername;
 }

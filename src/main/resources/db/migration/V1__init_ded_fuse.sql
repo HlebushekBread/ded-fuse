@@ -98,8 +98,8 @@ CREATE TABLE public.role (
 
 CREATE TABLE public.trusted_contact (
     id bigint NOT NULL,
-    owner_id bigint NOT NULL,
-    contact_id bigint NOT NULL,
+    keeper_id bigint NOT NULL,
+    member_id bigint NOT NULL,
     status integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     responded_at timestamp without time zone
@@ -193,7 +193,7 @@ COPY public.role (id, name) FROM stdin;
 -- Data for Name: trusted_contact; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.trusted_contact (id, owner_id, contact_id, status, created_at, responded_at) FROM stdin;
+COPY public.trusted_contact (id, keeper_id, member_id, status, created_at, responded_at) FROM stdin;
 \.
 
 

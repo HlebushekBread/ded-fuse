@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TrustedContactRepository extends JpaRepository<TrustedContact, Long> {
-    List<TrustedContact> findAllByOwnerId(long ownerId);
-    List<TrustedContact> findAllByContactId(long ownerId);
+    List<TrustedContact> findAllByKeeperId(long keeperId);
+    List<TrustedContact> findAllByMemberId(long memberId);
 }

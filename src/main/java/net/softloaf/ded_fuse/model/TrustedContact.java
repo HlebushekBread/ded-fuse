@@ -17,12 +17,12 @@ public class TrustedContact {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "keeper_id")
+    private User keeper;
 
     @ManyToOne
-    @JoinColumn(name = "contact_id")
-    private User contact;
+    @JoinColumn(name = "member_id")
+    private User member;
 
     @Column(name = "status")
     private int status;

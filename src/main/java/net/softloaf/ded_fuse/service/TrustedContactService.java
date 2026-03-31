@@ -29,10 +29,10 @@ public class TrustedContactService {
         List<TrustedContact> trustedContacts = new ArrayList<>();
 
         if(user.getRole().getName().equals("KEEPER")) {
-            trustedContacts = trustedContactRepository.findAllByOwnerId(user.getId());
+            trustedContacts = trustedContactRepository.findAllByKeeperId(user.getId());
         }
         if(user.getRole().getName().equals("MEMBER")) {
-            trustedContacts = trustedContactRepository.findAllByContactId(user.getId());
+            trustedContacts = trustedContactRepository.findAllByMemberId(user.getId());
         }
 
         List<TrustedContactResponse> trustedContactResponses = new ArrayList<>();
@@ -43,17 +43,17 @@ public class TrustedContactService {
     }
 
     public void addTrustedContact(NewTrustedContactRequest newTrustedContactRequest) {
-        User owner = userRepository.findById(authService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
-        User contact = userRepository.findByUsername(newTrustedContactRequest.getContactUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий контакт"));
+        User keeper = userRepository.findById(authService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
+        User member = userRepository.findByUsername(newTrustedContactRequest.getMemberUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий контакт"));
 
-        if(!contact.getRole().getName().equals("MEMBER")) {
+        if(!member.getRole().getName().equals("MEMBER")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неверная роль контакта");
         }
 
         TrustedContact trustedContact = new TrustedContact();
 
-        trustedContact.setOwner(owner);
-        trustedContact.setContact(contact);
+        trustedContact.setKeeper(keeper);
+        trustedContact.setMember(member);
         trustedContact.setStatus(0);
         trustedContact.setCreatedAt(LocalDateTime.now());
 
@@ -63,7 +63,7 @@ public class TrustedContactService {
     public void acceptTrustedContact(long id) {
         TrustedContact trustedContact = trustedContactRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий ID"));
 
-        if(trustedContact.getContact().getId() != authService.getCurrentUserId()) {
+        if(trustedContact.getMember().getId() != authService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав принятие");
         }
 
@@ -76,7 +76,7 @@ public class TrustedContactService {
     public void deleteTrustedContact(long id) {
         TrustedContact trustedContact = trustedContactRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий ID"));
 
-        if (trustedContact.getOwner().getId() != authService.getCurrentUserId() && trustedContact.getContact().getId() != authService.getCurrentUserId()) {
+        if (trustedContact.getKeeper().getId() != authService.getCurrentUserId() && trustedContact.getMember().getId() != authService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав удаление");
         }
 

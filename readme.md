@@ -94,21 +94,21 @@ registeredAt: date (ISO 8601)
 200 с телом в виде списка (может пустого) объектов вида <br>
 { <br>
 id: long, <br>
-owner: {id: long, username: string, roleName: string}, <br>
-contact: {id: long, username: string, roleName: string}, <br>
+keeper: {id: long, username: string, roleName: string}, <br>
+member: {id: long, username: string, roleName: string}, <br>
 status: int <br>
 createdAt": date (ISO 8601), <br>
 respondedAt: date (ISO 8601), <br>
 } <br>
 401, если JWT невалидный <br>
-#### POST /api/v1/contacts/add с телом {contactUsername: string}
+#### POST /api/v1/contacts/add с телом {memberUsername: string}
 Доступно только для KEEPER <br>
-Для создания контакта между текущим пользователем и contactUsername <br>
+Для создания контакта между текущим пользователем и memberUsername <br>
 Отвечает: <br>
 204, если контакт успешно добавлен <br>
 400, если роль контакта не MEMBER <br>
 401, если JWT невалидный <br>
-404, если contactUsername не существует <br>
+404, если memberUsername не существует <br>
 #### PATCH /api/v1/contacts/{id}/respond 
 Доступно только для MEMBER <br>
 Для принятия контакта со стороны того, кому его предложили <br>

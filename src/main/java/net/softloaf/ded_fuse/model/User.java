@@ -53,11 +53,11 @@ public class User {
     private List<HeartbeatLog> heartbeatLogs;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "keeper", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrustedContact> ownedContacts;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrustedContact> receivedContacts;
 
     @JsonIgnore
