@@ -3,6 +3,7 @@ package net.softloaf.ded_fuse.controller;
 import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.dto.HeartbeatLogResponse;
 import net.softloaf.ded_fuse.dto.LatLonRequest;
+import net.softloaf.ded_fuse.service.AuthService;
 import net.softloaf.ded_fuse.service.HeartbeatLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/heartbeat")
 public class HeartbeatController {
     private final HeartbeatLogService heartbeatLogService;
+    private final AuthService authService;
+
+    @GetMapping("/self")
+    public HeartbeatLogResponse getSelfHeartbeatLog() {
+        return heartbeatLogService.getHeartbeatLog(authService.getCurrentUserId());
+    }
 
     @GetMapping("/{id}")
     public HeartbeatLogResponse getHeartbeatLog(@PathVariable(name = "id") long id) {
