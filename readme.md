@@ -61,13 +61,13 @@ Authorization: Bearer {token}...
 id: long, <br>
 username: string <br>
 roleName: string <br>
-lastKnownLat: double;
-lastKnownLon: double;
-lastKnownAt: date (ISO 8601)
-lastHeartbeatAt: date (ISO 8601)
-reminderSentAt: date (ISO 8601)
-lastActiveAt: date (ISO 8601)
-registeredAt: date (ISO 8601)
+lastKnownLat: double; <br>
+lastKnownLon: double; <br>
+lastKnownAt: date (ISO 8601) <br>
+lastHeartbeatAt: date (ISO 8601) <br>
+reminderSentAt: date (ISO 8601) <br>
+lastActiveAt: date (ISO 8601) <br>
+registeredAt: date (ISO 8601) <br>
 } <br>
 #### GET /api/v1/users/member
 Для получения списка всех MEMBER юзеров (пожилых) <br>
@@ -132,12 +132,14 @@ respondedAt: date (ISO 8601), <br>
 200 с телом вида <br>
 { <br>
 id: long, <br>
-userId: long <br>
+user: {id: long, username: string, roleName: string} <br>
 tappedAt: date (ISO 8601), <br>
 lat: double, <br>
 lon: double, <br>
 } <br>
+400, если роль юзера не MEMBER <br>
 401, если JWT невалидный <br>
+403, если запрашивающий получает не свой лог и у него нет контакта с MEMBER из лога <br>
 404, если такого юзера не существует
 #### PUT /api/v1/heartbeat/tap  с телом {lat: double, lon: double}
 Доступно только для MEMBER <br>
