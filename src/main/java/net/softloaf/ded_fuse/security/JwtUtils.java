@@ -18,7 +18,7 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
     @Value("${jwt.lifetime}")
-    private int jwtLifetime;
+    private long jwtLifetime;
 
     public String generateToken(UserDetailsImpl userDetails) {
         Map<String, Object> claims = new HashMap<>();

@@ -9,7 +9,7 @@ import net.softloaf.ded_fuse.repository.TrustedContactRepository;
 import net.softloaf.ded_fuse.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -19,12 +19,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class TrustedContactService {
-    private final AuthService authService;
+    private final SessionService sessionService;
     private final UserRepository userRepository;
     private final TrustedContactRepository trustedContactRepository;
 
+    @Transactional(readOnly = true)
     public List<TrustedContactResponse> getUserTrustedContacts() {
-        User user = userRepository.findById(authService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
+        User user = userRepository.findById(sessionService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
 
         List<TrustedContact> trustedContacts = new ArrayList<>();
 
@@ -42,8 +43,9 @@ public class TrustedContactService {
         return trustedContactResponses;
     }
 
+    @Transactional
     public void addTrustedContact(NewTrustedContactRequest newTrustedContactRequest) {
-        User keeper = userRepository.findById(authService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
+        User keeper = userRepository.findById(sessionService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
         User member = userRepository.findByUsername(newTrustedContactRequest.getMemberUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий контакт"));
 
         if(!member.getRole().getName().equals("MEMBER")) {
@@ -60,10 +62,11 @@ public class TrustedContactService {
         trustedContactRepository.save(trustedContact);
     }
 
+    @Transactional
     public void acceptTrustedContact(long id) {
         TrustedContact trustedContact = trustedContactRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий ID"));
 
-        if(trustedContact.getMember().getId() != authService.getCurrentUserId()) {
+        if(trustedContact.getMember().getId() != sessionService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав принятие");
         }
 
@@ -73,10 +76,11 @@ public class TrustedContactService {
         trustedContactRepository.save(trustedContact);
     }
 
+    @Transactional
     public void deleteTrustedContact(long id) {
         TrustedContact trustedContact = trustedContactRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий ID"));
 
-        if (trustedContact.getKeeper().getId() != authService.getCurrentUserId() && trustedContact.getMember().getId() != authService.getCurrentUserId()) {
+        if (trustedContact.getKeeper().getId() != sessionService.getCurrentUserId() && trustedContact.getMember().getId() != sessionService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав удаление");
         }
 

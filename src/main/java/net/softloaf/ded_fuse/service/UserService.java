@@ -1,6 +1,7 @@
 package net.softloaf.ded_fuse.service;
 
 import lombok.RequiredArgsConstructor;
+import net.softloaf.ded_fuse.dto.LatLonRequest;
 import net.softloaf.ded_fuse.dto.NewUserRequest;
 import net.softloaf.ded_fuse.dto.UserBasicResponse;
 import net.softloaf.ded_fuse.dto.UserDetailedResponse;
@@ -20,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    private final AuthService authService;
+    private final SessionService sessionService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
@@ -61,10 +62,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public UserDetailedResponse findById(long id) {
         return new UserDetailedResponse(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий ID")));
     }
 
+    @Transactional(readOnly = true)
     public List<UserBasicResponse> findAllByRoleName(String name) {
         Role role = roleRepository.findByName(name).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующая кодировка роли"));
 
@@ -79,10 +82,32 @@ public class UserService {
     public void deleteUser(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующий ID"));
 
-        if (user.getId() != authService.getCurrentUserId()) {
+        if (user.getId() != sessionService.getCurrentUserId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нет прав на удаление");
         }
 
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void backgroundUpdate(LatLonRequest latLonRequest) {
+        User user = userRepository.findById(sessionService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
+
+        if(latLonRequest.getLat() != null || latLonRequest.getLon() != null) {
+            user.setLastKnownLat(latLonRequest.getLat());
+            user.setLastKnownLon(latLonRequest.getLon());
+            user.setLastKnownAt(LocalDateTime.now());
+        }
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void appOpenUpdate() {
+        User user = userRepository.findById(sessionService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
+
+        user.setLastActiveAt(LocalDateTime.now());
+
+        userRepository.save(user);
     }
 }

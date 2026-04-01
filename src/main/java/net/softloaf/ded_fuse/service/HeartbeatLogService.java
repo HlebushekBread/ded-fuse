@@ -3,7 +3,6 @@ package net.softloaf.ded_fuse.service;
 import lombok.RequiredArgsConstructor;
 import net.softloaf.ded_fuse.dto.HeartbeatLogResponse;
 import net.softloaf.ded_fuse.dto.LatLonRequest;
-import net.softloaf.ded_fuse.dto.TrustedContactResponse;
 import net.softloaf.ded_fuse.model.HeartbeatLog;
 import net.softloaf.ded_fuse.model.TrustedContact;
 import net.softloaf.ded_fuse.model.User;
@@ -16,20 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class HeartbeatLogService {
-    private final AuthService authService;
+    private final SessionService sessionService;
     private final UserRepository userRepository;
     private final HeartbeatLogRepository heartbeatLogRepository;
     private final TrustedContactRepository trustedContactRepository;
 
     @Transactional
     public void tapHeartbeat(LatLonRequest latLonRequest) {
-        User user = userRepository.findById(authService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
+        User user = userRepository.findById(sessionService.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Неавторизованный запрос"));
 
         HeartbeatLog heartbeatLog = heartbeatLogRepository.findByUserId(user.getId()).orElse(null);
 
@@ -42,9 +40,13 @@ public class HeartbeatLogService {
         if(latLonRequest.getLat() != null) heartbeatLog.setLat(latLonRequest.getLat());
         if(latLonRequest.getLon() != null) heartbeatLog.setLon(latLonRequest.getLon());
 
+        user.setLastHeartbeatAt(heartbeatLog.getTappedAt());
+
+        userRepository.save(user);
         heartbeatLogRepository.save(heartbeatLog);
     }
 
+    @Transactional(readOnly = true)
     public HeartbeatLogResponse getHeartbeatLog(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Неверный ID контакта"));
 
@@ -52,9 +54,9 @@ public class HeartbeatLogService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неверная роль пользователя");
         }
 
-        if(user.getId() != authService.getCurrentUserId()) {
+        if(user.getId() != sessionService.getCurrentUserId()) {
             List<TrustedContact> trustedContacts = trustedContactRepository.findAllByMemberId(user.getId());
-            long requestingId = authService.getCurrentUserId();
+            long requestingId = sessionService.getCurrentUserId();
             boolean flag = false;
             for(TrustedContact trustedContact : trustedContacts) {
                 if(trustedContact.getKeeper().getId() == requestingId && trustedContact.getStatus() == 1) {
