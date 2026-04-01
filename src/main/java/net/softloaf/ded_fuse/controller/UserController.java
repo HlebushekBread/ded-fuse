@@ -40,13 +40,13 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping
+    @PatchMapping("/pos")
     public ResponseEntity<?> backgroundUpdate(@RequestBody LatLonRequest latLonRequest) {
         userService.backgroundUpdate(latLonRequest);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping
+    @PatchMapping("/active")
     public ResponseEntity<?> appOpenUpdate() {
         userService.appOpenUpdate();
         return ResponseEntity.noContent().build();
