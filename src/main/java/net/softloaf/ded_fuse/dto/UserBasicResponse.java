@@ -7,11 +7,13 @@ import net.softloaf.ded_fuse.model.User;
 public class UserBasicResponse {
     private long id;
     private String username;
+    private String fullName;
     private String roleName;
 
     public UserBasicResponse(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.fullName = user.getFullName();
         this.roleName = user.getRole().getName();
     }
 }

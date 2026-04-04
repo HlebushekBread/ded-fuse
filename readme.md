@@ -44,7 +44,7 @@ Authorization: Bearer {token}...
 Отвечает: <br>
 200 с телом {token: string} (JWT токен), если код верный <br>
 401, если код неверный или пользователь не существует <br>
-#### POST /api/v1/auth/register c телом {username: string, role: 'MEMBER' | 'KEEPER'} <br>
+#### POST /api/v1/auth/register c телом {username: string, fullName: string, role: 'MEMBER' | 'KEEPER'} <br>
 Для регистрации по телефону, после этого сразу отправляется код для входа. <br>
 Отвечает: <br>
 204, если новый пользователь успешно зарегистрирован <br>
@@ -60,6 +60,7 @@ Authorization: Bearer {token}...
 { <br>
 id: long, <br>
 username: string <br>
+fullName: string <br>
 roleName: string <br>
 lastKnownLat: double; <br>
 lastKnownLon: double; <br>
@@ -73,7 +74,7 @@ registeredAt: date (ISO 8601) <br>
 #### GET /api/v1/users/member
 Для получения списка всех MEMBER пользователей (пожилых) <br>
 Отвечает: <br>
-200 с телом в виде списка (может пустого) объектов вида {id: long, username: string, roleName: string} <br>
+200 с телом в виде списка (может пустого) объектов вида {id: long, username: string, fullName: string, roleName: string} <br>
 401, если JWT невалидный <br>
 404, если каким-то образом в базе нет роли MEMBER (репортите)
 #### DELETE /api/v1/users/delete
@@ -105,8 +106,8 @@ registeredAt: date (ISO 8601) <br>
 200 с телом в виде списка (может пустого) объектов вида <br>
 { <br>
 id: long, <br>
-keeper: {id: long, username: string, roleName: string}, <br>
-member: {id: long, username: string, roleName: string}, <br>
+keeper: {id: long, username: string, fullName: string, roleName: string}, <br>
+member: {id: long, username: string, fullName: string, roleName: string}, <br>
 status: int <br>
 createdAt": date (ISO 8601), <br>
 respondedAt: date (ISO 8601), <br>
@@ -147,7 +148,7 @@ respondedAt: date (ISO 8601), <br>
 200 с телом вида <br>
 { <br>
 id: long, <br>
-user: {id: long, username: string, roleName: string} <br>
+user: {id: long, username: string, fullName: string, roleName: string} <br>
 tappedAt: date (ISO 8601), <br>
 lat: double, <br>
 lon: double, <br>

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class UserDetailedResponse {
     private long id;
     private String username;
+    private String fullName;
     private String roleName;
     private Double lastKnownLat;
     private Double lastKnownLon;
@@ -21,6 +22,7 @@ public class UserDetailedResponse {
     public UserDetailedResponse(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.fullName = user.getFullName();
         this.roleName = user.getRole().getName();
         this.lastKnownLat = user.getLastKnownLat();
         this.lastKnownLon = user.getLastKnownLon();

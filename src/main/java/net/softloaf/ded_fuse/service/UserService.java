@@ -43,6 +43,7 @@ public class UserService {
         User user = new User();
 
         user.setUsername(newUserRequest.getUsername());
+        user.setFullName(newUserRequest.getFullName());
 
         Role role = roleRepository.findByName(newUserRequest.getRole()).orElse(null);
         user.setRole(role);

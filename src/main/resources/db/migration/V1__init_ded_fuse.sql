@@ -129,6 +129,7 @@ ALTER TABLE public.trusted_contact ALTER COLUMN id ADD GENERATED ALWAYS AS IDENT
 CREATE TABLE public."user" (
     id bigint NOT NULL,
     phone_number character varying CONSTRAINT user_username_not_null NOT NULL,
+    full_name character varying,
     role_id bigint NOT NULL,
     last_known_lat double precision,
     last_known_lon double precision,

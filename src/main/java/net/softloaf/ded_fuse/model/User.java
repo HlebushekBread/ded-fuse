@@ -23,6 +23,9 @@ public class User {
     @Column(name = "phone_number")
     private String username;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
