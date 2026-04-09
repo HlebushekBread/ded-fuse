@@ -1,7 +1,8 @@
 #docker-compose --env-file .env up --build -d
-
+name: ded-fuse
 services:
   backend:
+    container_name: backend
     build: .
     ports:
       - "2026:8080"
@@ -23,6 +24,7 @@ services:
       redis:
         condition: service_started
   db:
+    container_name: database
     image: postgres:15-alpine
     restart: always
     environment:
@@ -38,6 +40,7 @@ services:
       retries: 5
 
   redis:
+    container_name: cache
     image: redis:7-alpine
     restart: always
     volumes:

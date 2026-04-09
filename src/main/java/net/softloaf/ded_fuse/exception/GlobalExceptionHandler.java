@@ -1,6 +1,6 @@
 package net.softloaf.ded_fuse.exception;
 
-import net.softloaf.ded_fuse.dto.ErrorResponse;
+import net.softloaf.ded_fuse.dto.response.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

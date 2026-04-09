@@ -1,8 +1,8 @@
 package net.softloaf.ded_fuse.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.HeartbeatLogResponse;
-import net.softloaf.ded_fuse.dto.LatLonRequest;
+import net.softloaf.ded_fuse.dto.response.HeartbeatLogResponse;
+import net.softloaf.ded_fuse.dto.request.LatLonRequest;
 import net.softloaf.ded_fuse.service.SessionService;
 import net.softloaf.ded_fuse.service.HeartbeatLogService;
 import org.springframework.http.ResponseEntity;

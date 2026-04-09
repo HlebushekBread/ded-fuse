@@ -1,9 +1,9 @@
 package net.softloaf.ded_fuse.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.LatLonRequest;
-import net.softloaf.ded_fuse.dto.UserBasicResponse;
-import net.softloaf.ded_fuse.dto.UserDetailedResponse;
+import net.softloaf.ded_fuse.dto.request.LatLonRequest;
+import net.softloaf.ded_fuse.dto.response.UserBasicResponse;
+import net.softloaf.ded_fuse.dto.response.UserDetailedResponse;
 import net.softloaf.ded_fuse.service.SessionService;
 import net.softloaf.ded_fuse.service.UserService;
 import org.springframework.http.ResponseEntity;

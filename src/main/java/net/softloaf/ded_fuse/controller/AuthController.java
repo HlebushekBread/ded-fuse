@@ -3,7 +3,7 @@ package net.softloaf.ded_fuse.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.NewUserRequest;
+import net.softloaf.ded_fuse.dto.request.NewUserRequest;
 import net.softloaf.ded_fuse.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

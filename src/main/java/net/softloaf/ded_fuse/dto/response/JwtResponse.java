@@ -1,9 +1,7 @@
-package net.softloaf.ded_fuse.dto;
+package net.softloaf.ded_fuse.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 @AllArgsConstructor

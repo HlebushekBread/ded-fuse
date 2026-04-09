@@ -1,8 +1,8 @@
 package net.softloaf.ded_fuse.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.NewTrustedContactRequest;
-import net.softloaf.ded_fuse.dto.TrustedContactResponse;
+import net.softloaf.ded_fuse.dto.request.NewTrustedContactRequest;
+import net.softloaf.ded_fuse.dto.response.TrustedContactResponse;
 import net.softloaf.ded_fuse.service.TrustedContactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

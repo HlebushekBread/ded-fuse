@@ -1,8 +1,8 @@
 package net.softloaf.ded_fuse.service;
 
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.HeartbeatLogResponse;
-import net.softloaf.ded_fuse.dto.LatLonRequest;
+import net.softloaf.ded_fuse.dto.response.HeartbeatLogResponse;
+import net.softloaf.ded_fuse.dto.request.LatLonRequest;
 import net.softloaf.ded_fuse.model.HeartbeatLog;
 import net.softloaf.ded_fuse.model.TrustedContact;
 import net.softloaf.ded_fuse.model.User;

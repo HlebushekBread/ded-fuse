@@ -1,10 +1,10 @@
 package net.softloaf.ded_fuse.service;
 
 import lombok.RequiredArgsConstructor;
-import net.softloaf.ded_fuse.dto.LatLonRequest;
-import net.softloaf.ded_fuse.dto.NewUserRequest;
-import net.softloaf.ded_fuse.dto.UserBasicResponse;
-import net.softloaf.ded_fuse.dto.UserDetailedResponse;
+import net.softloaf.ded_fuse.dto.request.LatLonRequest;
+import net.softloaf.ded_fuse.dto.request.NewUserRequest;
+import net.softloaf.ded_fuse.dto.response.UserBasicResponse;
+import net.softloaf.ded_fuse.dto.response.UserDetailedResponse;
 import net.softloaf.ded_fuse.model.Role;
 import net.softloaf.ded_fuse.model.User;
 import net.softloaf.ded_fuse.repository.RoleRepository;
@@ -30,22 +30,22 @@ public class UserService {
         if (newUserRequest.getUsername() == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Username не может быть null");
         }
-        if (newUserRequest.getUsername().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username не может быть пустым");
+        String clearedUsername = newUserRequest.getUsername().replaceAll("[\\s\\-\\(\\)]", "");
+        if (!clearedUsername.matches("^\\+?[1-9]\\d{10,14}$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username должен быть номером телефона");
         }
-        if (!roleRepository.existsByName(newUserRequest.getRole())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующая кодировка роли");
-        }
-        if (userRepository.existsByUsername(newUserRequest.getUsername())) {
+        if (userRepository.existsByUsername(clearedUsername)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь уже существует");
         }
 
+        Role role = roleRepository.findByName(newUserRequest.getRole())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Несуществующая кодировка роли"));
+
         User user = new User();
 
-        user.setUsername(newUserRequest.getUsername());
+        user.setUsername(clearedUsername);
         user.setFullName(newUserRequest.getFullName());
 
-        Role role = roleRepository.findByName(newUserRequest.getRole()).orElse(null);
         user.setRole(role);
 
         user.setLastKnownLat(null);

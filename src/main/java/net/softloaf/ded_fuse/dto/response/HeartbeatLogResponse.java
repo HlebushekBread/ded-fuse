@@ -1,4 +1,4 @@
-package net.softloaf.ded_fuse.dto;
+package net.softloaf.ded_fuse.dto.response;
 
 import lombok.Data;
 import net.softloaf.ded_fuse.model.HeartbeatLog;

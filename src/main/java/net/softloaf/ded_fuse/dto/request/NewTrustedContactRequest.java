@@ -1,4 +1,4 @@
-package net.softloaf.ded_fuse.dto;
+package net.softloaf.ded_fuse.dto.request;
 
 import lombok.Data;
 
