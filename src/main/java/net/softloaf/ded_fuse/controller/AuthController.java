@@ -28,7 +28,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody NewUserRequest newUserRequest, HttpServletRequest request, HttpServletResponse response) {
         userService.saveNewUser(newUserRequest);
-        GenerateOneTimeTokenRequest ottRequest = new GenerateOneTimeTokenRequest(newUserRequest.getUsername());
+        GenerateOneTimeTokenRequest ottRequest = new GenerateOneTimeTokenRequest(newUserRequest.getUsername().replaceAll("[\\s\\-\\(\\)]", ""));
         OneTimeToken ott = oneTimeTokenService.generate(ottRequest);
         try {
             oneTimeTokenGenerationSuccessHandler.handle(request, response, ott);
