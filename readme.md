@@ -53,6 +53,8 @@ Authorization: Bearer {token}...
 409, если юзернейм занят <br>
 422, если юзернейм null <br>
 ### Пользователь:
+#### GET /api/v1/users/self
+Аналог users/{id}, только для получения своей информации (Смотрите ниже) <br>
 #### GET /api/v1/users/{id}
 Для получения детальной информации по пользователю по id <br>
 Отвечает: <br>
@@ -71,7 +73,7 @@ lastActiveAt: date (ISO 8601) <br>
 registeredAt: date (ISO 8601) <br>
 } <br>
 404, если пользователя не существует
-#### GET /api/v1/users/member
+#### GET /api/v1/users/members
 Для получения списка всех MEMBER пользователей (пожилых) <br>
 Отвечает: <br>
 200 с телом в виде списка (может пустого) объектов вида {id: long, username: string, fullName: string, roleName: string} <br>

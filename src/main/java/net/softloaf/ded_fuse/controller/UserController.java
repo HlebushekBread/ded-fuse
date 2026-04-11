@@ -23,7 +23,12 @@ public class UserController {
         return userService.findById(id);
     }
 
-    @GetMapping("/member")
+    @GetMapping("/self")
+    public UserDetailedResponse getSelf() {
+        return userService.findById(sessionService.getCurrentUserId());
+    }
+
+    @GetMapping("/members")
     public List<UserBasicResponse> getMembers() {
         return userService.findAllByRoleName("MEMBER");
     }
