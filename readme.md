@@ -20,6 +20,8 @@ JWT_LIFETIME= { время в мс, пока что 1800000 (30 минут) } <b
 ### Запустить командой "docker-compose --env-file .env up --build -d"
 ### Бек поднимется как localhost:8080
 ### (Или просто отправляйте запросы на http://breadlab.net:2026)
+### <a href="http://softloaf.net:1337/swagger-ui/index.html#">Swagger-ui</a>
+
 
 # Список ручек:
 К каждому запросу, кроме тех, что направлены на ручки аутентификации <br>
@@ -154,6 +156,7 @@ user: {id: long, username: string, fullName: string, roleName: string} <br>
 tappedAt: date (ISO 8601), <br>
 lat: double, <br>
 lon: double, <br>
+status: string <br>
 } <br>
 400, если роль пользователя получаемого лога не MEMBER <br>
 401, если JWT невалидный <br>
