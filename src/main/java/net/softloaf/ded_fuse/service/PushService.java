@@ -5,15 +5,20 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import net.softloaf.ded_fuse.dto.request.PushTokenRequest;
 import net.softloaf.ded_fuse.model.HeartbeatLog;
 import net.softloaf.ded_fuse.model.PushToken;
 import net.softloaf.ded_fuse.model.TrustedContact;
+import net.softloaf.ded_fuse.model.User;
 import net.softloaf.ded_fuse.repository.HeartbeatLogRepository;
 import net.softloaf.ded_fuse.repository.PushTokenRepository;
 import net.softloaf.ded_fuse.repository.TrustedContactRepository;
+import net.softloaf.ded_fuse.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +29,20 @@ public class PushService {
     private final PushTokenRepository pushTokenRepository;
     private final HeartbeatLogRepository heartbeatLogRepository;
     private final TrustedContactRepository trustedContactRepository;
+    private final UserRepository userRepository;
+    private final SessionService sessionService;
+
+    @Transactional
+    public void writeToken(PushTokenRequest pushTokenRequest) {
+        User user = userRepository.findByUsername(pushTokenRequest.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
+        PushToken pushToken = pushTokenRepository.findByUserIdAndPlatform(user.getId(), pushTokenRequest.getPlatform()).orElse(new PushToken());
+        pushToken.setToken(pushToken.getToken());
+        pushToken.setUser(user);
+        pushToken.setPlatform(pushTokenRequest.getPlatform());
+        pushToken.setUpdatedAt(LocalDateTime.now());
+
+        pushTokenRepository.save(pushToken);
+    }
 
     private String send(String token, String title, String body) throws FirebaseMessagingException {
 

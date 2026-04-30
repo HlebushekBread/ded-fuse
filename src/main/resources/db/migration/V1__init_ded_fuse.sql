@@ -60,7 +60,7 @@ CREATE TABLE public.push_token (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     token character varying NOT NULL,
-    platform integer NOT NULL,
+    platform character varying NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
 

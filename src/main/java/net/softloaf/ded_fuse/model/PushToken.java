@@ -24,7 +24,7 @@ public class PushToken {
     private String token;
 
     @Column(name = "platform")
-    private int platform;
+    private String platform;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
