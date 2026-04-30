@@ -10,4 +10,5 @@ import java.util.List;
 public interface TrustedContactRepository extends JpaRepository<TrustedContact, Long> {
     List<TrustedContact> findAllByKeeperId(long keeperId);
     List<TrustedContact> findAllByMemberId(long memberId);
+    boolean existsByKeeperIdAndMemberId(long keeperId, long memberId);
 }

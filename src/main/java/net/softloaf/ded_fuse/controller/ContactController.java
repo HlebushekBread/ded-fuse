@@ -108,6 +108,20 @@ public class ContactController {
                                         }
                                         """)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Контакт уже существует",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    examples = @ExampleObject(value = """
+                                        {
+                                          "status": 409,
+                                          "message": "Контакт уже существует",
+                                          "timestamp": 0
+                                        }
+                                        """)
+                            )
                     )
             }
     )

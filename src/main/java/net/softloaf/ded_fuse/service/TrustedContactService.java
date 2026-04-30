@@ -51,6 +51,9 @@ public class TrustedContactService {
         if(!member.getRole().getName().equals("MEMBER")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неверная роль контакта");
         }
+        if(trustedContactRepository.existsByKeeperIdAndMemberId(keeper.getId(), member.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Контакт уже существует");
+        }
 
         TrustedContact trustedContact = new TrustedContact();
 
