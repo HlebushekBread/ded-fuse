@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.softloaf.ded_fuse.dto.request.PushTokenRequest;
 import net.softloaf.ded_fuse.model.HeartbeatLog;
 import net.softloaf.ded_fuse.model.PushToken;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PushService {
@@ -36,7 +38,7 @@ public class PushService {
     public void writeToken(PushTokenRequest pushTokenRequest) {
         User user = userRepository.findByUsername(pushTokenRequest.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
         PushToken pushToken = pushTokenRepository.findByUserIdAndPlatform(user.getId(), pushTokenRequest.getPlatform()).orElse(new PushToken());
-        pushToken.setToken(pushToken.getToken());
+        pushToken.setToken(pushTokenRequest.getToken());
         pushToken.setUser(user);
         pushToken.setPlatform(pushTokenRequest.getPlatform());
         pushToken.setUpdatedAt(LocalDateTime.now());
@@ -45,6 +47,7 @@ public class PushService {
     }
 
     private String send(String token, String title, String body) throws FirebaseMessagingException {
+        log.info("Sending for {}. Message: {}: {}", token, title, body);
 
         Message message = Message.builder()
                 .setToken(token)
@@ -59,11 +62,14 @@ public class PushService {
 
     @Scheduled(fixedRate = 3600000)
     @Transactional(readOnly = true)
-    private void checkHeartbeats() throws FirebaseMessagingException {
+    public void checkHeartbeats() throws FirebaseMessagingException {
+        System.out.println("Запуск");
+
         LocalDateTime cutoff1h = LocalDateTime.now().minusHours(1);
         LocalDateTime cutoff3h = LocalDateTime.now().minusHours(3);
 
         List<HeartbeatLog> heartbeatLogs = heartbeatLogRepository.findByTappedAtBefore(cutoff1h);
+        System.out.println(heartbeatLogs.size());
 
         for(HeartbeatLog heartbeatLog : heartbeatLogs) {
             List<PushToken> pushTokens = pushTokenRepository.findByUserId(heartbeatLog.getUser().getId());
@@ -80,9 +86,9 @@ public class PushService {
 
             for(PushToken pushToken : pushTokens) {
                 if (heartbeatLog.getTappedAt().isBefore(cutoff3h)) {
-                    send(pushToken.getToken(), "Нажмите на пульс", "Не забудьте отметиться в приложении.");
-                } else {
                     send(pushToken.getToken(), "Контакты уведомлены", "Вашим контактам отправлено сообщение о вашей неактивности.");
+                } else {
+                    send(pushToken.getToken(), "Нажмите на пульс", "Не забудьте отметиться в приложении.");
                 };
             }
         }

@@ -29,7 +29,7 @@ public class PushController {
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "Токен успешно удален"
+                            description = "Токен успешно добавлен"
                     ),
                     @ApiResponse(
                             responseCode = "404",
