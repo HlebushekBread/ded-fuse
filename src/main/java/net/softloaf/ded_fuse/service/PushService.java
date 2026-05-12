@@ -46,7 +46,7 @@ public class PushService {
         pushTokenRepository.save(pushToken);
     }
 
-    private String send(String token, String title, String body) throws FirebaseMessagingException {
+    private void send(String token, String title, String body) {
         log.info("Sending for {}. Message: {}: {}", token, title, body);
 
         Message message = Message.builder()
@@ -57,19 +57,20 @@ public class PushService {
                         .build())
                 .build();
 
-        return FirebaseMessaging.getInstance().send(message);
+        try {
+            FirebaseMessaging.getInstance().send(message);
+        } catch (FirebaseMessagingException e) {
+            return;
+        }
     }
 
     @Scheduled(fixedRate = 3600000)
     @Transactional(readOnly = true)
     public void checkHeartbeats() throws FirebaseMessagingException {
-        System.out.println("Запуск");
-
         LocalDateTime cutoff1h = LocalDateTime.now().minusHours(1);
         LocalDateTime cutoff3h = LocalDateTime.now().minusHours(3);
 
         List<HeartbeatLog> heartbeatLogs = heartbeatLogRepository.findByTappedAtBefore(cutoff1h);
-        System.out.println(heartbeatLogs.size());
 
         for(HeartbeatLog heartbeatLog : heartbeatLogs) {
             List<PushToken> pushTokens = pushTokenRepository.findByUserId(heartbeatLog.getUser().getId());
